@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import ItemAddForm from '../item-add-form/item-add-form';
 import AppHeader from '../app-header/app-header';
 import SearchPanel from '../serach-panel/search-panel';
 import TodoList from '../todo-list/todo-list';
@@ -7,6 +7,7 @@ import ItemStatusFilter from '../item-status-filter/item-status-filter';
 import './app.css';
 
 class App extends Component {
+  maxId = 100;
   state = {
     todoData: [
       { label: ' Drink coffe', important: false, id: 1 },
@@ -17,11 +18,22 @@ class App extends Component {
   deleteItem = id => {
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex(el => el.id === id);
-      const before = todoData.slice(0, idx);
-      const after = todoData.slice(idx + 1);
-      const newArray = [...before, ...after];
+      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
       return {
         todoData: newArray,
+      };
+    });
+  };
+  addItem = text => {
+    const newItem = {
+      label: text,
+      important: false,
+      id: this.maxId++,
+    };
+    this.setState(({ todoData }) => {
+      const newArr = [...todoData, newItem];
+      return {
+        todoData: newArr,
       };
     });
   };
@@ -35,6 +47,7 @@ class App extends Component {
         </div>
 
         <TodoList todos={this.state.todoData} onDeleted={this.deleteItem} />
+        <ItemAddForm onItemAdded={this.addItem} />
       </div>
     );
   }
